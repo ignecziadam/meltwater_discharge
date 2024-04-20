@@ -48,27 +48,24 @@ Whitebox is ready to use.
 Create these directories and place data in the directories as described here prior to running any scripts.
 
 - DATA_DIR  
-  	This contains the input data  
+  	> This contains the input data  
 	- DATA_DIR/COP_DEM  
 		> Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product). Retain original naming of the folders and products.
 	- DATA_DIR/MAR
 		> Place the annual MAR netCDF files here (or files from another RCM).
   		> NOTE: As there are many versions of MAR and other RCMs (different model versions, variables, coverage, files, CRS, etc.) users might need to modify the scripts that deal with MAR pre-processing (e.g.: preprocess_mar.py).
 	
-- RESULTS_DIR
-  	This will contain the output data, and some region specific data inputs
-	- RESULTS_DIR/RGI_x_xxxxxx
-		Folder for investigated RGI regions, create this for each processed RGI region.
-	- RESULTS_DIR/RGI_x_xxxxxx/IceMask
-		Place ice mask shapefiles here (downloaded from the Randolph Glacier Inventory).
-		In the case of Greenland, the GIMP ice mask raster is also placed here (the name of this raster is hardcoded to create_icemask.sh).
-	- RESULTS_DIR/RGI_x_xxxxxx/selectors
-		- RGI_x_xxxxxx_TileList.csv
-			Place a csv containing the list of Copernicus_DEM tiles for the region.
-			These lists can be constructed by intersecting the Copernicus DEM tile grid shapefile
-			and the RGI region domain, and exporting the selected records from the attribute table (in QGIS, or ArcGIS).
-		- RGI_x_xxxxxx_cutline_laeaa.shp
-			Place a shapefile here that contains the the RGI first order region outline (downloaded from the Randolph Glacier Inventory).
+- RESULTS_DIR  
+  	> This will contain the output data, and some region specific data inputs  
+	- RESULTS_DIR/RGI_x_xxxxxx  
+		> Folder for investigated RGI regions, create this for each processed RGI region.  
+	- RESULTS_DIR/RGI_x_xxxxxx/IceMask  
+		> Place ice mask shapefiles here (downloaded from the Randolph Glacier Inventory). In the case of Greenland, the GIMP ice mask raster is also placed here (the name of this raster is hardcoded to create_icemask.sh).
+	- RESULTS_DIR/RGI_x_xxxxxx/selectors  
+		- RGI_x_xxxxxx_TileList.csv  
+			> Place a csv containing the list of Copernicus_DEM tiles for the region. These lists can be constructed by intersecting the Copernicus DEM tile grid shapefile and the RGI region domain, and exporting the selected records from the attribute table (in QGIS, or ArcGIS).
+		- RGI_x_xxxxxx_cutline_laeaa.shp  
+    > Place a shapefile here that contains the the RGI first order region outline (downloaded from the Randolph Glacier Inventory).
 		
 Other subdirectories are created automatically by the scripts, as discussed below.
 
