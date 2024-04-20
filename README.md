@@ -50,7 +50,7 @@ Create these directories and place data in the directories as described here pri
 - DATA_DIR  
   	This contains the input data  
 	- DATA_DIR/COP_DEM  
-	        >Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product). Retain original naming of the folders and products.
+		> Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product). Retain original naming of the folders and products.
 	- DATA_DIR/MAR
 		> Place the annual MAR netCDF files here (or files from another RCM).
   		> NOTE: As there are many versions of MAR and other RCMs (different model versions, variables, coverage, files, CRS, etc.) users might need to modify the scripts that deal with MAR pre-processing (e.g.: preprocess_mar.py).
