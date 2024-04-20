@@ -5,8 +5,7 @@ A high-resolution, operational pan-Arctic meltwater discharge database from 1950
 doi: xxxxxxxxxx
 The document also provides guidance for code execution.
 
-Adam Igneczi, Jonathan Bamber
-20/04/2024
+Adam Igneczi, Jonathan Bamber (20/04/2024)
 
 # Introduction
 We provide Bash Shell and Python scripts which are used in our data processing algorithm.
