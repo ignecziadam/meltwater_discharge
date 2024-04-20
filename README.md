@@ -1,6 +1,5 @@
 
-MELTWATER DISCHARGE DATA PROCESSING DESCRIPTION
-
+# MELTWATER DISCHARGE DATA PROCESSING DESCRIPTION
 This document describes the content of the script files published
 in the following paper:
 A high-resolution, operational pan-Arctic meltwater discharge database from 1950 to 2021
@@ -10,10 +9,7 @@ The document also provides guidance for code execution.
 Adam Igneczi, Jonathan Bamber
 20/04/2024
 
-
-==============================================================================================
-INTRODUCTION
-==============================================================================================
+# INTRODUCTION
 We provide Bash Shell and Python scripts which are used in our data processing algorithm.
 We also provide 3 Python scripts which were used for data comparisons and graph production.
 
@@ -35,39 +31,31 @@ Bash Shell scripts also have hard-coded environmental variables,
 e.g. main data and results directories. These might need to be changed depending on the directory structure
 the user has set up. Please see guidance here and in the comments within the script files.
 
+# SOFTWARE ENVIRONMENTS
 
-==============================================================================================
-SOFTWARE ENVIRONMENTS
-==============================================================================================
-###
-# Conda environment for the MAR transformations
+Conda environment for the MAR transformations
 conda config --add conda-forge
 conda config --set channel_priority strict
 
-###
-# Conda environment for data preprocessing
+Conda environment for data preprocessing
 conda create -n gdal_env gdal
 conda create -n geotransform_env rioxarray xarray dask netCDF4 bottleneck geopandas openpyxl
 
-###
-# Conda environment for routing operations (might not work on certain Linux versions)
+Conda environment for routing operations (might not work on certain Linux versions)
 conda create -n routing_env whitebox geopandas rioxarray xarray netCDF4
 
-# First time use, initialise Whitebox (remain in the terminal window)
+First time use, initialise Whitebox (remain in the terminal window)
 activate routing_env
 python
 import whitebox
 wbt = whitebox.WhiteboxTools()
 
-# Test that download worked
+Test that download worked
 print(wbt.version())
 
-# whitebox is ready to use
+whitebox is ready to use
 
-
-==============================================================================================
-DIRECTORY STRUCTURE AND DATA PREP
-==============================================================================================
+# DIRECTORY STRUCTURE AND DATA PREP
 Create these directories and place data in the directories as described here
 prior to running any scripts.
 
@@ -101,17 +89,12 @@ Other subdirectories are created automatically by the scripts, as discussed belo
 		Place all the provided Python scirpts here.
 		NOTE: this directory needs to be called "scripts_python"
 
-
-==============================================================================================
-BATCH AND PYTHON SCRIPTS
-==============================================================================================
+# BATCH AND PYTHON SCRIPTS
 In this section we briefly explain what each script is doing.
 We structure this section according to the sequence the scripts need to run.
 Batch Shell scripts and the corresponding Python scripts are explained together
 
-
-1. Select and move DEM and LandMask tiles into the appropriate regional folder
-==============================================================================================
+## 1. Select and move DEM and LandMask tiles into the appropriate regional folder
 The process need to be called twice, once for DEM and once for the LandMask.
 The script need to be executed (twice) for each investigated RGI region separately.
 Appropriate subfolders are automatically created.
@@ -126,9 +109,7 @@ Positional arguments (need to be declared when running the script)
 	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 	$2 PRODTYPE [DEM/LandMask] : The type of data to move, LandMask or DEM.
 
-
-2. Create DEM and LandMask mosaics
-==============================================================================================
+## 2. Create DEM and LandMask mosaics
 Reprojectes and mosaics the DEM and LandMask tiles, placed in the appropriate folders by the previous process.
 The script need to be executed for each investigated RGI region separately.
 Appropriate subfolders are automatically created. Intermediate products are automatically deleted.
@@ -141,9 +122,7 @@ Hard-coded environmental variables (might need changing)
 Positional arguments (need to be declared when running the script)
 	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 	
-	
-3. Create IceMask mosaics
-==============================================================================================
+## 3. Create IceMask mosaics
 Converts ice mask shapefiles to ice mask rasters, reprojects and snaps them to the appropriate COP-DEM mosaic.
 In the case of Greenland, it reprojects, resamples, and snaps the GIMP mask to the appropriate COP-DEM mosaic.
 The script need to be executed for each investigated RGI region separately.
@@ -157,9 +136,7 @@ Hard-coded environmental variables (might need changing)
 Positional arguments (need to be declared when running the script)
 	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 
-
-4. Pre-process MAR (or another RCM)
-==============================================================================================
+## 4. Pre-process MAR (or another RCM)
 Selects and filters appropriate variables from raw MAR products.
 Reprojects these variables, and clips them appropriately. Calculates vertical gradients.
 It also exports the domain of valid MAR data for use in subsequent processes.
@@ -182,10 +159,8 @@ Hard-coded environmental variables (might need changing)
 Positional arguments (need to be declared when running the script)
 	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 	$2 CORE_Number [No] : The number of CPUs cores used in the parallel processing pool.
-
 	
-5. Delinate drainage basins
-==============================================================================================
+## 5. Delinate drainage basins
 Uses hydrological routing tools to delinate surface drainage basins.
 Carries out the appropriate filtering steps (using hard-coded parameters).
 Saves the derived basins into GeoTiff and the outflow points into a ShapeFile.
@@ -210,9 +185,7 @@ Hard-coded environmental variables (might need changing)
 Positional arguments (need to be declared when running the script)
 	$1 CurrentDomainSTR [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 
-	
-6. Downscale MAR products and integrate runoff over the drainage basins
-==============================================================================================
+## 6. Downscale MAR products and integrate runoff over the drainage basins
 Upsamples ice runoff, ice albedo, and land runoff; corrects for high-resolution ice masks.
 Downscales these products, by using elevation correction.
 Sums runoff for drainage basins, separates ice runoff where the ice albedo is below 0.7 (i.e. appropx. below the snowline).
@@ -229,9 +202,7 @@ Positional arguments (need to be declared when running the script)
 	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 	$2 CORE_Number [No] : The number of CPUs cores used in the parallel processing pool.
 
-
-7. Concatenate annual files
-==============================================================================================
+## 7. Concatenate annual files
 Grabs annual netCDF files, containing basin specific daily runoff, and concatenates these to a single file
 covering the period of 1950-2021.
 The script need to be executed for each investigated RGI region separately.
@@ -244,9 +215,7 @@ Hard-coded environmental variables (might need changing)
 Positional arguments (need to be declared when running the script)
 	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 
-
-8. Create pan-Arctic summary dataset
-==============================================================================================
+## 8. Create pan-Arctic summary dataset
 Grabs regional basin specific runoff files created in the previous step, calculates monthly sums from the daily data.
 Concatenates these datasets into a single pan-Arctic file.
 
@@ -257,10 +226,8 @@ Hard-coded environmental variables (might need changing)
 
 Hard-coded environmental variables in the Python script
 	regions : List of strings, the strings match up with the names of the processed RGI regions (RGI_x_xxxxxx).
-	
-	
-9-10. Dataset comparison, graph plotting
-==============================================================================================
+		
+## 9-10. Dataset comparison, graph plotting
 Plots basin specific runoff, with running means.
 Compares out dataset with Bamber et al. (2018) and Mankoff et al. (2020).
 
