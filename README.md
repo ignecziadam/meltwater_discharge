@@ -57,7 +57,8 @@ whitebox is ready to use
 Create these directories and place data in the directories as described here
 prior to running any scripts.
 
-- DATA_DIR: This contains the input data
+- DATA_DIR
+  	This contains the input data
 	- DATA_DIR/COP_DEM
 		Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product).
 		Retain original naming of the folders and products.
@@ -66,7 +67,8 @@ prior to running any scripts.
 		NOTE: As there are many versions of MAR and other RCMs (different model versions, variables, coverage, files, CRS, etc.)
 		users might need to modify the scripts that deal with MAR pre-processing (e.g.: preprocess_mar.py).
 	
-- RESULTS_DIR: This will contain the output data, and some region specific data inputs
+- RESULTS_DIR
+  	This will contain the output data, and some region specific data inputs
 	- RESULTS_DIR/RGI_x_xxxxxx
 		Folder for investigated RGI regions, create this for each processed RGI region.
 	- RESULTS_DIR/RGI_x_xxxxxx/IceMask
@@ -82,7 +84,8 @@ prior to running any scripts.
 		
 Other subdirectories are created automatically by the scripts, as discussed below.
 
-- HOME_DIR: Batch Shell scripts need to be placed in a home directory (this can be anywhere).
+- HOME_DIR
+  	Batch Shell scripts need to be placed in a home directory (this can be anywhere).
 	- HOME_DIR/scripts_python
 		Place all the provided Python scirpts here.
 		NOTE: this directory needs to be called "scripts_python"
@@ -100,12 +103,16 @@ Appropriate subfolders are automatically created.
 Script : wrangle_files.sh (calls wrangle_files.py)
 
 Hard-coded environmental variables (might need changing)
-	INPUT_DIR : The directory where the Copernicus DEM data is located, e.g.: DATA_DIR/COP_DEM
-	OUTPUT_DIR : The main results directory, e.g.: RESULTS_DIR
+	- INPUT_DIR
+ 		The directory where the Copernicus DEM data is located, e.g.: DATA_DIR/COP_DEM
+	- OUTPUT_DIR
+ 		The main results directory, e.g.: RESULTS_DIR
 	
 Positional arguments (need to be declared when running the script)
-	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
-	$2 PRODTYPE [DEM/LandMask] : The type of data to move, LandMask or DEM.
+	- $1 REGION [RGI_no_name] 
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $2 PRODTYPE [DEM/LandMask]
+ 		The type of data to move, LandMask or DEM.
 
 ## 2. Create DEM and LandMask mosaics
 Reprojectes and mosaics the DEM and LandMask tiles, placed in the appropriate folders by the previous process.
@@ -115,10 +122,12 @@ Appropriate subfolders are automatically created. Intermediate products are auto
 Script : create_dem_and_landmask.sh
 
 Hard-coded environmental variables (might need changing)
-	DATADIR : The main results directory, e.g.: RESULTS_DIR
+	- DATADIR
+ 		The main results directory, e.g.: RESULTS_DIR
 
 Positional arguments (need to be declared when running the script)
-	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $1 REGION [RGI_no_name]
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 	
 ## 3. Create IceMask mosaics
 Converts ice mask shapefiles to ice mask rasters, reprojects and snaps them to the appropriate COP-DEM mosaic.
@@ -129,10 +138,12 @@ Appropriate subfolders are automatically created. Intermediate products are auto
 Script : create_icemask.sh (calls get_bounding_box.py)
 
 Hard-coded environmental variables (might need changing)
-	DATADIR : The main results directory, e.g.: RESULTS_DIR
+	- DATADIR
+ 		The main results directory, e.g.: RESULTS_DIR
 
 Positional arguments (need to be declared when running the script)
-	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $1 REGION [RGI_no_name]
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 
 ## 4. Pre-process MAR (or another RCM)
 Selects and filters appropriate variables from raw MAR products.
@@ -151,12 +162,16 @@ utilise the option of parallel processing.
 Script : preprocess_mar.sh (calls preprocess_mar.py)
 
 Hard-coded environmental variables (might need changing)
-	INPUT_DIR : The directory where the MAR data is located, e.g.: DATA_DIR/MAR
-	OUTPUT_DIR : The main results directory, e.g.: RESULTS_DIR
+	- INPUT_DIR
+ 		The directory where the MAR data is located, e.g.: DATA_DIR/MAR
+	- OUTPUT_DIR
+ 		The main results directory, e.g.: RESULTS_DIR
 
 Positional arguments (need to be declared when running the script)
-	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
-	$2 CORE_Number [No] : The number of CPUs cores used in the parallel processing pool.
+	- $1 REGION [RGI_no_name]
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $2 CORE_Number [No]
+ 		The number of CPUs cores used in the parallel processing pool.
 	
 ## 5. Delinate drainage basins
 Uses hydrological routing tools to delinate surface drainage basins.
@@ -171,17 +186,20 @@ Thus there is no Bash Shell written for this process.
 Script : create_basins.py
 
 Hard-coded environmental variables (might need changing)
-	WorkingDIR : The main results directory, e.g.: RESULTS_DIR
-	MinBasinArea : Size of the smallest basin possible (km^2), basins below this size are merged with their larger neighbours.
-	Resolution : Spatial resolution of the basin product (m).
-	EdgeNoRGI : Remove basin if the number of pixels touching RGI domain edges is larger than this number (integer no.).
-	RelBasinReduction :  Remove basins that extend outside the valid MAR domain. 
-		This % is the largest fractional area outside the MAR domain that is allowed (%).
-	
- of The % of original basin outside of the MAR domain above which to remove basin
+	- WorkingDIR
+ 		The main results directory, e.g.: RESULTS_DIR
+	- MinBasinArea
+ 		Size of the smallest basin possible (km^2), basins below this size are merged with their larger neighbours.
+	- Resolution
+ 		Spatial resolution of the basin product (m).
+	- EdgeNoRGI
+ 		Remove basin if the number of pixels touching RGI domain edges is larger than this number (integer no.).
+	- RelBasinReduction
+ 		Remove basins that extend outside the valid MAR domain. This % is the largest fractional area outside the MAR domain that is allowed (%).
 
 Positional arguments (need to be declared when running the script)
-	$1 CurrentDomainSTR [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $1 CurrentDomainSTR [RGI_no_name]
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 
 ## 6. Downscale MAR products and integrate runoff over the drainage basins
 Upsamples ice runoff, ice albedo, and land runoff; corrects for high-resolution ice masks.
@@ -194,11 +212,14 @@ Appropriate subfolders are automatically created. Intermediate products are auto
 Script : downscale_and_integrate.sh (calls downscale_and_integrate.py)
 
 Hard-coded environmental variables (might need changing)
-	WORKING_DIR : The main results directory, e.g.: RESULTS_DIR
+	- WORKING_DIR
+ 		The main results directory, e.g.: RESULTS_DIR
 
 Positional arguments (need to be declared when running the script)
-	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
-	$2 CORE_Number [No] : The number of CPUs cores used in the parallel processing pool.
+	- $1 REGION [RGI_no_name]
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $2 CORE_Number [No]
+ 		The number of CPUs cores used in the parallel processing pool.
 
 ## 7. Concatenate annual files
 Grabs annual netCDF files, containing basin specific daily runoff, and concatenates these to a single file
@@ -208,10 +229,12 @@ The script need to be executed for each investigated RGI region separately.
 Script : concatenate_annual_results.sh (calls concatenate_annual_results.py)
 
 Hard-coded environmental variables (might need changing)
-	WORKING_DIR : The main results directory, e.g.: RESULTS_DIR
+	- WORKING_DIR
+ 		The main results directory, e.g.: RESULTS_DIR
 
 Positional arguments (need to be declared when running the script)
-	$1 REGION [RGI_no_name] : Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
+	- $1 REGION [RGI_no_name]
+ 		Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.
 
 ## 8. Create pan-Arctic summary dataset
 Grabs regional basin specific runoff files created in the previous step, calculates monthly sums from the daily data.
@@ -220,21 +243,23 @@ Concatenates these datasets into a single pan-Arctic file.
 Script : summary_results.sh (calls summary_results.py)
 
 Hard-coded environmental variables (might need changing)
-	WORKING_DIR : The main results directory, e.g.: RESULTS_DIR
+	- WORKING_DIR
+ 		The main results directory, e.g.: RESULTS_DIR
 
 Hard-coded environmental variables in the Python script
-	regions : List of strings, the strings match up with the names of the processed RGI regions (RGI_x_xxxxxx).
+	- regions
+ 		List of strings, the strings match up with the names of the processed RGI regions (RGI_x_xxxxxx).
 		
 ## 9-10. Dataset comparison, graph plotting
 Plots basin specific runoff, with running means.
 Compares out dataset with Bamber et al. (2018) and Mankoff et al. (2020).
 
 Scripts
-plot_local_runoff.py
+- plot_local_runoff.py
 	Plots runoff for a basin, for the whole period covered by the dataset and a single year.
 	Variables identifying the RGI domain and the specific basin, and the start and end years are hard-coded.
 
-plot_comparisons.py
+- plot_comparisons.py
 	Compares our dataset with  Bamber et al. (2018) and Mankoff et al. (2020).
 	Plots graphs showing the comparison.
 	Saves Excel spreadsheets with the data.
