@@ -32,24 +32,24 @@ the user has set up. Please see guidance here and in the comments within the scr
 
 # Software environments
 Conda environment for the MAR transformations
-conda config --add conda-forge
-conda config --set channel_priority strict
+"conda config --add conda-forge"
+"conda config --set channel_priority strict"
 
 Conda environment for data preprocessing
-conda create -n gdal_env gdal
-conda create -n geotransform_env rioxarray xarray dask netCDF4 bottleneck geopandas openpyxl
+"conda create -n gdal_env gdal"
+"conda create -n geotransform_env rioxarray xarray dask netCDF4 bottleneck geopandas openpyxl"
 
 Conda environment for routing operations (might not work on certain Linux versions)
-conda create -n routing_env whitebox geopandas rioxarray xarray netCDF4
+"conda create -n routing_env whitebox geopandas rioxarray xarray netCDF4"
 
 First time use, initialise Whitebox (remain in the terminal window)
-activate routing_env
-python
-import whitebox
-wbt = whitebox.WhiteboxTools()
+"activate routing_env"
+"python"
+"import whitebox"
+"wbt = whitebox.WhiteboxTools()"
 
 Test that download worked
-print(wbt.version())
+"print(wbt.version())"
 
 whitebox is ready to use
 
