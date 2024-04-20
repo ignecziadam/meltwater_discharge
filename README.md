@@ -1,5 +1,4 @@
-
-# MELTWATER DISCHARGE DATA PROCESSING DESCRIPTION
+# Meltwater discharge data processing description
 This document describes the content of the script files published
 in the following paper:
 A high-resolution, operational pan-Arctic meltwater discharge database from 1950 to 2021
@@ -9,7 +8,7 @@ The document also provides guidance for code execution.
 Adam Igneczi, Jonathan Bamber
 20/04/2024
 
-# INTRODUCTION
+# Introduction
 We provide Bash Shell and Python scripts which are used in our data processing algorithm.
 We also provide 3 Python scripts which were used for data comparisons and graph production.
 
@@ -31,8 +30,7 @@ Bash Shell scripts also have hard-coded environmental variables,
 e.g. main data and results directories. These might need to be changed depending on the directory structure
 the user has set up. Please see guidance here and in the comments within the script files.
 
-# SOFTWARE ENVIRONMENTS
-
+# Software environments
 Conda environment for the MAR transformations
 conda config --add conda-forge
 conda config --set channel_priority strict
@@ -55,7 +53,7 @@ print(wbt.version())
 
 whitebox is ready to use
 
-# DIRECTORY STRUCTURE AND DATA PREP
+# Directory structure and data prep
 Create these directories and place data in the directories as described here
 prior to running any scripts.
 
@@ -89,7 +87,7 @@ Other subdirectories are created automatically by the scripts, as discussed belo
 		Place all the provided Python scirpts here.
 		NOTE: this directory needs to be called "scripts_python"
 
-# BATCH AND PYTHON SCRIPTS
+# Batch Shell and Python scripts
 In this section we briefly explain what each script is doing.
 We structure this section according to the sequence the scripts need to run.
 Batch Shell scripts and the corresponding Python scripts are explained together
