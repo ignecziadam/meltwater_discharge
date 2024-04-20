@@ -1,6 +1,5 @@
 # Meltwater discharge data processing description
-This document describes the content of the script files published in the following paper: A high-resolution, operational pan-Arctic meltwater discharge database from 1950 to 2021
-
+This document describes the content of the script files published in the following paper: A high-resolution, operational pan-Arctic meltwater discharge database from 1950 to 2021.  
 doi: xxxxxxxxxx
 
 The document also provides guidance for code execution.
@@ -8,63 +7,53 @@ The document also provides guidance for code execution.
 Adam Igneczi, Jonathan Bamber (20/04/2024)
 
 # Introduction
-We provide Bash Shell and Python scripts which are used in our data processing algorithm.
-We also provide 3 Python scripts which were used for data comparisons and graph production.
+We provide Bash Shell and Python scripts which are used in our data processing algorithm. We also provide 3 Python scripts which were used for data comparisons and graph production.
 
-The Python scripts are called by the Bash Shell scripts (except for the 2 data comparison and visualisation scripts)
-Various Anaconda environments are called by these Bash Shells (hard-coded in the Bash scripts).
-Software environments are installed on a Linux machine, see the instructions below to set them up.
+The Python scripts are called by the Bash Shell scripts (except for the 2 data comparison and visualisation scripts). Various Anaconda environments are called by these Bash Shells (hard-coded in the Bash scripts). Software environments are installed on a Linux machine, see the instructions below to set them up.
 
 We also provide guidance on the directory structure, that users need to create on the machine.
-Input data need to be placed into these folders prior to running any scripts (see below)
+Input data need to be placed into these folders prior to running any scripts (see below).
 
-Scripts are discussed in the order they need to be executed.
-Users only need to manually run the Bash Shell scripts, 
-the appropriate Python scripts are called be these (except for the 2 data comparison and visualisation scripts).
+Scripts are discussed in the order they need to be executed. Users only need to manually run the Bash Shell scripts, the appropriate Python scripts are called be these (except for the 2 data comparison and visualisation scripts).
 
-Bash Shell scripts need positional arguments, 
-appropriate guidance is provided here and in comments within the script files.
+Bash Shell scripts need positional arguments, appropriate guidance is provided here and in comments within the script files.
 
-Bash Shell scripts also have hard-coded environmental variables,
-e.g. main data and results directories. These might need to be changed depending on the directory structure
+Bash Shell scripts also have hard-coded environmental variables, e.g. main data and results directories. These might need to be changed depending on the directory structure
 the user has set up. Please see guidance here and in the comments within the script files.
 
-# Software environments
-Conda environment for the MAR transformations
-- conda config --add conda-forge"
-- conda config --set channel_priority strict"
+# Software environments  
+Conda environment for the MAR transformations  
+> conda config --add conda-forge  
+> conda config --set channel_priority strict  
 
-Conda environment for data preprocessing
-- conda create -n gdal_env gdal
-- conda create -n geotransform_env rioxarray xarray dask netCDF4 bottleneck geopandas openpyxl
+Conda environment for data preprocessing  
+> conda create -n gdal_env gdal
+> conda create -n geotransform_env rioxarray xarray dask netCDF4 bottleneck geopandas openpyxl  
 
-Conda environment for routing operations (might not work on certain Linux versions)
-- conda create -n routing_env whitebox geopandas rioxarray xarray netCDF4
+Conda environment for routing operations (might not work on certain Linux versions)   
+> conda create -n routing_env whitebox geopandas rioxarray xarray netCDF4  
 
-First time use, initialise Whitebox (remain in the terminal window)
-- activate routing_env
-- python
-- import whitebox
-- wbt = whitebox.WhiteboxTools()
+First time use, initialise Whitebox (remain in the terminal window)  
+> activate routing_env  
+> python  
+> import whitebox  
+> wbt = whitebox.WhiteboxTools()  
 
-Test that download worked
-- print(wbt.version())
+Test that download worked  
+> print(wbt.version())  
 
-Whitebox is ready to use
+Whitebox is ready to use.  
 
 # Directory structure and data prep
-Create these directories and place data in the directories as described here
-prior to running any scripts.
+Create these directories and place data in the directories as described here prior to running any scripts.
 
-- DATA_DIR
-  	This contains the input data
-	- DATA_DIR/COP_DEM
-	        >Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product).
-		Retain original naming of the folders and products.
+- DATA_DIR  
+  	This contains the input data  
+	- DATA_DIR/COP_DEM  
+	        >Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product). Retain original naming of the folders and products.
 	- DATA_DIR/MAR
-		Place the annual MAR netCDF files here (or files from another RCM). 
-		NOTE: As there are many versions of MAR and other RCMs (different model versions, variables, coverage, files, CRS, etc.)
-		users might need to modify the scripts that deal with MAR pre-processing (e.g.: preprocess_mar.py).
+		> Place the annual MAR netCDF files here (or files from another RCM).
+  		> NOTE: As there are many versions of MAR and other RCMs (different model versions, variables, coverage, files, CRS, etc.) users might need to modify the scripts that deal with MAR pre-processing (e.g.: preprocess_mar.py).
 	
 - RESULTS_DIR
   	This will contain the output data, and some region specific data inputs
