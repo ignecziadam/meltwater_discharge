@@ -59,7 +59,7 @@ prior to running any scripts.
 - DATA_DIR
   	This contains the input data
 	- DATA_DIR/COP_DEM
-		Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product).
+	        >Place the raw Copernicus_DEM download here (we used the Copernicus GLO-90 DGED DEM product).
 		Retain original naming of the folders and products.
 	- DATA_DIR/MAR
 		Place the annual MAR netCDF files here (or files from another RCM). 
