@@ -64,7 +64,7 @@ Other subdirectories are created automatically by the scripts, as discussed belo
 - HOME_DIR  
   	> Batch Shell scripts need to be placed in a home directory (this can be anywhere).
 	- HOME_DIR/scripts_python  
-		> Place all the provided Python scirpts here.
+		> Place all the provided Python scirpts here.  
   		> NOTE: this directory needs to be called "scripts_python"
 
 # Batch Shell and Python scripts
