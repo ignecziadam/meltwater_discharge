@@ -55,7 +55,7 @@ MARDomain = os.path.join(DomainDIR, "selectors", CurrentDomainSTR + "_MARextent_
 RGIDomain = os.path.join(DomainDIR, "selectors", CurrentDomainSTR + "_cutline_laeaa.shp")
 
 Basins = os.path.join(DomainDIR, CurrentDomainSTR + "_Basins.tif")
-OutflowPoints = os.path.join(DomainDIR, CurrentDomainSTR + "_OutflowPoints.shp")
+OutflowPoints = os.path.join(DomainDIR, CurrentDomainSTR + "_OutflowPoints.gpkg")
 
 
 # Create drainage basins
@@ -209,6 +209,7 @@ print("Get raw outflow points", flush=True)
 
 OutflowRaster = os.path.join(TempDIR, CurrentDomainSTR + "_OutflowRaster.tif")
 OutflowPointsRaw = os.path.join(TempDIR, CurrentDomainSTR + "_OutflowPointsRaw.shp")
+OutflowPointsFiltered = os.path.join(TempDIR, CurrentDomainSTR + "_OutflowPointsFiltered.shp")
 
 wbt.conditional_evaluation(
     i=D8Pointer,
@@ -246,7 +247,7 @@ outflowpoints["ID"] = outflowpoints["ID"].astype("int")
 outflowpoints = outflowpoints[outflowpoints.ID != -32768]
 
 # Save the filtered outflow points
-outflowpoints.to_file(OutflowPoints)
+outflowpoints.to_file(OutflowPointsFiltered)
 
 
 # Apply MAR domain on the outflow points
@@ -254,17 +255,17 @@ outflowpoints.to_file(OutflowPoints)
 print("Apply MAR domain on the outflow points", flush=True)
 
 wbt.reinitialize_attribute_table(
-    i=OutflowPoints
+    i=OutflowPointsFiltered
 )
 
 wbt.extract_raster_values_at_points(
     inputs=BasinsClipped,
-    points=OutflowPoints,
+    points=OutflowPointsFiltered,
     out_text=False
 )
 
 # Only retain outflow points which do not correspond to the removed small basins
-outflowpoints = geopandas.read_file(OutflowPoints,
+outflowpoints = geopandas.read_file(OutflowPointsFiltered,
                                     ignore_fields=["FID"])
 
 outflowpoints = outflowpoints.rename(columns={"VALUE1": "ID"})
@@ -316,9 +317,13 @@ ValidShapeFile = os.path.join(
 )
 valid_shape.to_file(ValidShapeFile)
 
+# Convert to integers
+basins = basins.fillna(-1.0)
+basins = basins.astype("int32")
+basins.rio.write_nodata(-1, encoded=True, inplace=True)
 
 # Save the basins
-basins.rio.to_raster(Basins, compress='LZW')
+basins.rio.to_raster(Basins, compress='DEFLATE')
 
 basins.close()
 del basins
@@ -334,4 +339,4 @@ os.remove(BasinsCombined)
 os.remove(BasinsMasked)
 os.remove(BasinsClipped)
 
-print("Finsihed processing for " + CurrentDomainSTR, flush=True)
+print("Finished processing for " + CurrentDomainSTR, flush=True)
