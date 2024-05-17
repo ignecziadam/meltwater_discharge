@@ -139,7 +139,7 @@ Uses hydrological routing tools to delinate surface drainage basins. Carries out
 NOTE: As Whitebox was not compatible with our Linux instance, this script has been executed on our Windwos desktops. Thus there is no Bash Shell written for this process.
 
 Conda environment: routing_env
-Script : create_basins.py (run from terminal as "python create_basins.py RGI_x_xxx")
+> Script : create_basins.py (run from terminal as "python create_basins.py RGI_x_xxx")
 
 Hard-coded environmental variables (might need changing)  
 - WorkingDIR  
