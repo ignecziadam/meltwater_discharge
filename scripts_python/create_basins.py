@@ -34,7 +34,7 @@ EdgeNoRGI = 1  # Remove basin if >= the number of pixel touching RGI domain edge
 RelBasinReduction = 10  # the % of original basin outside of the MAR domain above which to remove basin
 
 # Set up current data directories
-WorkingDIR = "C:\postdoc_bristol\gis\Regions"
+WorkingDIR = os.getenv("WORKING_DIR")  # os.getenv("WORKING_DIR") "C:\\postdoc_bristol\\gis\\Regions"
 CurrentDomainSTR = sys.argv[1]  # "RGI_6_Iceland" sys.argv[1]
 
 
@@ -242,9 +242,9 @@ wbt.extract_raster_values_at_points(
 outflowpoints = geopandas.read_file(OutflowPointsRaw,
                                     ignore_fields=["FID"])
 
-outflowpoints = outflowpoints.rename(columns={"VALUE1": "ID"})
-outflowpoints["ID"] = outflowpoints["ID"].astype("int")
-outflowpoints = outflowpoints[outflowpoints.ID != -32768]
+outflowpoints = outflowpoints.rename(columns={"VALUE1": "BasinID"})
+outflowpoints["BasinID"] = outflowpoints["BasinID"].astype("int")
+outflowpoints = outflowpoints[outflowpoints.BasinID != -32768]
 
 # Save the filtered outflow points
 outflowpoints.to_file(OutflowPointsFiltered)
@@ -268,9 +268,9 @@ wbt.extract_raster_values_at_points(
 outflowpoints = geopandas.read_file(OutflowPointsFiltered,
                                     ignore_fields=["FID"])
 
-outflowpoints = outflowpoints.rename(columns={"VALUE1": "ID"})
-outflowpoints["ID"] = outflowpoints["ID"].astype("int")
-outflowpoints = outflowpoints[outflowpoints.ID != -1]
+outflowpoints = outflowpoints.rename(columns={"VALUE1": "BasinID"})
+outflowpoints["BasinID"] = outflowpoints["BasinID"].astype("int")
+outflowpoints = outflowpoints[outflowpoints.BasinID != -1]
 
 # Add geographical (lat, lon) coordinates to the outputs
 outflowpoints["LAT"] = outflowpoints.to_crs("EPSG:4326").geometry.y
@@ -289,7 +289,7 @@ basins = basins_masked
 del basins_masked
 
 # Remove basins without discharge point
-basins = xarray.where(numpy.isin(basins, outflowpoints["ID"]), basins, numpy.nan)
+basins = xarray.where(numpy.isin(basins, outflowpoints["BasinID"]), basins, numpy.nan)
 basins.rio.write_nodata(-1.0, encoded=True, inplace=True)
 
 # Save valid domain as shapefile
