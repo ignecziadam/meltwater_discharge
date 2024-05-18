@@ -137,8 +137,20 @@ Positional arguments (need to be declared when running the script)
 Uses hydrological routing tools to delinate surface drainage basins. Carries out the appropriate filtering steps (using hard-coded parameters). Saves the derived basins into GeoTiff and the outflow points into a ShapeFile. The script need to be executed for each investigated RGI region separately. Appropriate subfolders are automatically created. Intermediate products are automatically deleted.
 
 NOTE: As Whitebox was not compatible with our Linux instance, this script has been executed on our Windwos desktops. Thus there is no Bash Shell written for this process.
-
-Conda environment: routing_env  
+  
+Script : create_basins.sh (calls create_basins.py, might not be compatible with all Linux instances)  
+  
+Hard-coded environmental variables (might need changing)    
+- WORKING_DIR  
+	> The main results directory, e.g.: RESULTS_DIR  
+   
+Positional arguments (need to be declared when running the script)  
+- $1 CurrentDomainSTR [RGI_no_name]  
+	> Name of the RGI region folder in the RESULTS_DIR, e.g.: RESULTS_DIR/RGI_x_xxxxxx.  
+  
+OR  
+  
+Conda environment: conda activate routing_env  
 Script : create_basins.py (run from terminal as "python create_basins.py RGI_x_xxx")
 
 Hard-coded environmental variables (might need changing)  
