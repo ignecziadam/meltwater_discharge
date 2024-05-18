@@ -12,8 +12,10 @@ import os
 import sys
 import glob
 import xarray
+import numpy
 import pandas
 import geopandas
+from datetime import datetime
 
 
 # Initialise script
@@ -52,7 +54,7 @@ basins_filelist.sort(reverse=False)
 # Load in the outflow points
 outflow_points = geopandas.read_file(
     os.path.join(
-        working_dir, current_domain_str, current_domain_str + "_OutflowPoints.shp")
+        working_dir, current_domain_str, current_domain_str + "_OutflowPoints.gpkg")
 )
 
 
@@ -88,12 +90,6 @@ basins_complete = xarray.concat(basins_seq, dim="time")
 
 print("Basin specific runoff concatenated", flush=True)
 
-# Add the geographical coordinates of outflow points
-basins_complete = basins_complete.assign_coords(
-    {"lat": ("BasinID", outflow_points["LAT"]), "lon": ("BasinID", outflow_points["LON"]),
-     "x": ("BasinID", outflow_points.geometry.x), "y": ("BasinID", outflow_points.geometry.y)}
-)
-
 
 # Save the final results
 #########################
@@ -103,12 +99,116 @@ TRU_complete.to_csv(
     index=False
 )
 
-# Basin specific runoff
-basins_complete_filename = os.path.join(results_dir,
+# Ensure that basin IDs are integers
+basins_complete["BasinID"] = basins_complete["BasinID"].astype("int32")
+
+# Prepare time coordinate
+time_units = 'days since {Y}-{M}-{D} 00:00:00'.format(
+    Y=int(basins_complete["time"].dt.year[0]),
+    M=int(basins_complete["time"].dt.month[0]),
+    D=int(basins_complete["time"].dt.day[0]),
+
+)
+time_calendar = basins_complete["time"].dt.calendar
+times = pandas.date_range(
+    start=str(int(basins_complete["time"].dt.year[0])) +
+          "-" + str(int(basins_complete["time"].dt.month[0])) +
+          "-" + str(int((basins_complete["time"].dt.day[0]))),
+    end=str(int(basins_complete["time"].dt.year[-1])) +
+          "-" + str(int(basins_complete["time"].dt.month[-1])) +
+          "-" + str(int(basins_complete["time"].dt.day[-1])),
+    freq='1D',
+)
+
+# Construct compliant Xarray Dataset
+basins_export = xarray.Dataset(
+    data_vars={
+        "IceRunoff": (["time", "BasinID"], basins_complete["IceRunoff"].data,
+            {"long_name": "Meltwater discharge from ice runoff",
+             "standard_name": "water_volume_transport_into_sea_water_from_rivers",
+             "units": "m3",
+             "coverage_content_type": "modelResult"
+              }),
+        "IceRunoff_BSL": (["time", "BasinID"], basins_complete["IceRunoff_BSL"].data,
+            {"long_name": "Meltwater discharge from ice runoff below the snowline",
+             "standard_name": "water_volume_transport_into_sea_water_from_rivers",
+             "units": "m3",
+             "coverage_content_type": "modelResult"
+             }),
+        "LandRunoff": (["time", "BasinID"], basins_complete["LandRunoff"].data,
+            {"long_name": "Meltwater discharge from land runoff",
+             "standard_name": "water_volume_transport_into_sea_water_from_rivers",
+             "units": "m3",
+             "coverage_content_type": "modelResult"
+             })
+    },
+    coords={
+        "time": ("time", times,
+            {"long_name": "time",
+             "standard_name": "time"
+             }),
+        "BasinID": ("BasinID", basins_complete["BasinID"].data,
+            {"long_name": "Drainage basin ID"
+             }),
+        "x": ("BasinID", outflow_points.geometry.x,
+            {"long_name": "Easting",
+             "standard_name": "projection_x_coordinate",
+             "units": "m"
+             }),
+        "y": ("BasinID", outflow_points.geometry.y,
+            {"long_name": "Northing",
+             "standard_name": "projection_y_coordinate",
+             "units": "m"
+             }),
+        "lat": ("BasinID", outflow_points["LAT"],
+            {"long_name": "latitude",
+             "standard_name": "latitude",
+             "units": "degrees_north"
+             }),
+        "lon": ("BasinID", outflow_points["LON"],
+            {"long_name": "longitude",
+             "standard_name": "longitude",
+             "units": "degrees_east"
+             }),
+    },
+    attrs={
+        "title": "Pan-Arctic land-ice and tundra meltwater discharge database from 1950 to 2021",
+        "summary": "A high resolution (daily, 250m) land ice and tundra meltwater discharge dataset for the period "
+                   "1950-2021. Meltwater discharge is derived from daily ~6 km regional climate model, "
+                   "Modéle Atmosphérique Régional (MAR), runoff simulations that are statistically downscaled and "
+                   "routed to the coastlines.The statistical downscaling algorithm uses native vertical gradients of "
+                   "the MAR data and high resolution (250 m) DEM, land mask (Copernicus GLO-90) and ice mask (GIMP, "
+                   "RGI) datasets.Routing to coastal outflow points is performed by a hydrological routing scheme "
+                   "applied to the high-resolution DEM and the downscaled runoff. Meltwater components from "
+                   "non-glaciated land, bare glacier ice and glaciated area above the snowline are separated to "
+                   "facilitate further analysis.",
+        "keywords": "Arctic, Discharge, Meltwater, North Atlantic Ocean, Canada, Greenland, Iceland, Russian Arctic, "
+                    "Svalbard",
+        "institution": "University of Bristol",
+        "creator_name": "Adam Igneczi, Jonathan Bamber",
+        "Conventions": "CF-1.8, ACDD-1.3",
+        "date_created": str(datetime.now()),
+        "history": str(datetime.now()),
+        "project": "Pan-Arctic observing System of Systems: Implementing Observations for societal Needs (Arctic "
+                   "PASSION)",
+        "acknowledgement": "Horizon 2020 (H2020), grant no. 101003472; German Federal Ministry of Education and "
+                           "Research (BMBF), grant no. 01DD20001",
+        "license": "Creative Commons Attribution 4.0 International (CC-BY-4.0)",
+        "references": "https://github.com/ignecziadam/meltwater_discharge.git",
+        "projected_crs_name": "EPSG:3574",
+        "geographical_crs_name": "EPSG:4326"
+    }
+)
+
+basins_export.time.encoding["units"] = time_units
+
+# Construct filename
+basins_export_filename = os.path.join(results_dir,
                                         current_domain_str + "_BasinRunoff.nc")
 
-basins_complete.to_netcdf(
-    path=basins_complete_filename, mode="w", format="NETCDF4",
+# Write to file
+basins_export.to_netcdf(
+    path=basins_export_filename, mode="w", format="NETCDF4",
     encoding={
         "IceRunoff": {"zlib": True, "complevel": 2},
         "IceRunoff_BSL": {"zlib": True, "complevel": 2},
