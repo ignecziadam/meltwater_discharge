@@ -1,3 +1,6 @@
+# This script contains code from Mankoff et al. (2020)
+# https://github.com/GEUS-Glaciology-and-Climate/freshwater/blob/main/lob.org
+# Import modules
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -9,6 +12,7 @@ import statsmodels.api as sm
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 from statsmodels.iolib.table import (SimpleTable, default_txt_fmt)
 
+# Define a custom axis alignment tool
 # http://matplotlib.org/examples/pylab_examples/spine_placement_demo.html
 def adjust_spines(ax,spines, offset=10):
     for loc, spine in ax.spines.items():
@@ -52,7 +56,7 @@ def adjust_spines(ax,spines, offset=10):
             ax.xaxis.set_ticks([])
 
 
-#
+# set up data paths
 working_dir = "C:\\postdoc_bristol\\gis\\Regions"
 output_dir = os.path.join(working_dir, "Plots")
 
@@ -123,7 +127,7 @@ for nl in nloc:
         os.path.join(working_dir, "mankoff_discharge", "obs_" + nl[1] + ".csv"))
 
 
-#
+# set up namespace (and the IDs of the corresponding drainage basins by investigating the location of river gauges and basin coverage)
 names = ['G Kobbefjord & Oriartorfik',
          'Ks Kiattuut Sermiat',
          'Q Qaanaaq',
@@ -142,12 +146,13 @@ basin_ID = {
 name = [' '.join(_.split(" ")[1:]) for _ in names]
 loc = [_.split(" ")[0] for _ in names]
 
-# Import data
+# Import our downscaled coastal discharge data
 domain_data = xr.open_dataset(
     os.path.join(working_dir, "RGI_5_Greenland", "Results", "RGI_5_Greenland_BasinRunoff.nc"))
 
 obs = {} # store all in dict of dataarrays
 
+# integrate the river gauge data with the downscaled coastal discharge estimations
 for i, l in enumerate(loc):
     if l == 'G':
         tmp_Kb = pd.read_csv(os.path.join(working_dir, "mankoff_discharge", "obs_Kb.csv"),
