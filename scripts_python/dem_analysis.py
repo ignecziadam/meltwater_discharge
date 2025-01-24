@@ -1,3 +1,4 @@
+# Import modules
 ################
 import os
 import sys
@@ -12,10 +13,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 
-# Get input and output directory paths from the bash shell
+# Get input and output directory paths
 working_dir = "C:\\postdoc_bristol\\gis\\Regions"  # os.getenv("WORKING_DIR") "C:\postdoc_bristol\gis\Regions"
 output_dir = os.path.join(working_dir, "Plots")
 
+# set up namespace and data containers
 domains = [
     "RGI_3_CanadaN",
     "RGI_4_CanadaS",
@@ -30,15 +32,18 @@ land_stats_list = []
 ice_bins_list = []
 land_bins_list = []
 
+# load the data
 for name in domains:
     current_domain_str = name
 
+    # load basins domain
     basins_domain = geopandas.read_file(
         os.path.join(working_dir, current_domain_str, "selectors",
                      current_domain_str + "_Basins_extent_laeaa.shp"
                      )
     )
 
+    # load dems and masks
     dem_diff = rioxarray.open_rasterio(
         os.path.join(working_dir, current_domain_str, current_domain_str + "_DemDiff.tif"),
         band_as_variable=False)
@@ -61,14 +66,14 @@ for name in domains:
     land_mask = land_mask.squeeze(dim="band")
     land_mask = land_mask.rio.clip(basins_domain.geometry.values, all_touched=False)
 
-    #
+    # mask the dems
     dem_diff_ice = xarray.where(ice_mask.data == 1, dem_diff.data, numpy.nan)
     dem_mar_ice = numpy.where(ice_mask.data == 1, dem_mar.data, numpy.nan)
 
     dem_diff_land = numpy.where(ice_mask.data == 0, dem_diff.data, numpy.nan)
     dem_mar_land = numpy.where(ice_mask.data == 0, dem_mar.data, numpy.nan)
 
-    #
+    # determine the bin edges for the MAR elevations
     highres_pix_area = abs(dem_diff.rio.resolution()[0] * dem_diff.rio.resolution()[1])
 
     ice_bins = numpy.linspace(float(numpy.nanmin(dem_mar_ice)),
@@ -77,28 +82,27 @@ for name in domains:
     land_bins = numpy.linspace(float(numpy.nanmin(dem_mar_land)),
                                float(numpy.nanmax(dem_mar_land)), 20)
 
-    #
+    # assign the data to the bins
     dem_mar_ice_cat = numpy.digitize(dem_mar_ice, ice_bins)
     dem_mar_ice_cat = numpy.where(ice_mask.data == 1, dem_mar_ice_cat, numpy.nan)
 
     dem_mar_ice_cat = dem_mar_ice_cat.flatten()
     dem_diff_ice = dem_diff_ice.flatten()
 
-    #
     dem_mar_land_cat = numpy.digitize(dem_mar_land, land_bins)
     dem_mar_land_cat = xarray.where(ice_mask.data == 0, dem_mar_land_cat, numpy.nan)
 
     dem_mar_land_cat = dem_mar_land_cat.flatten()
     dem_diff_land = dem_diff_land.flatten()
 
-    #
+    # create dataframes for grouping
     ice = pandas.DataFrame({"category": dem_mar_ice_cat,
                             "dem_diff": dem_diff_ice})
 
     land = pandas.DataFrame({"category": dem_mar_land_cat,
                             "dem_diff": dem_diff_land})
 
-    #
+    # group the COP-250 DEM minus MAR DEM data according to MAR elevation bins
     ice_stats = pandas.DataFrame(columns=["area", "med_dem_dif"],
                                  index=range(1, len(ice_bins), 1))
     ice_stats["area"] = (ice.groupby(['category']).count() * highres_pix_area / 1000000).dem_diff
