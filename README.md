@@ -210,7 +210,7 @@ Hard-coded environmental variables in the Python script
 - regions  
 	> List of strings, the strings match up with the names of the processed RGI regions (RGI_x_xxxxxx).
 		
-## 9-10. Dataset comparison, graph plotting
+## 9-13. Dataset comparison, graph plotting
 Plots basin specific runoff, with running means. Compares out dataset with Bamber et al. (2018) and Mankoff et al. (2020).
 
 Scripts  
@@ -221,3 +221,13 @@ Scripts
 	> Compares our dataset with  Bamber et al. (2018) and Mankoff et al. (2020).
 	Plots graphs showing the comparison.
 	Saves Excel spreadsheets with the data.
+ 
+ - dem_analysis.py  
+	> Bins MAR elevation (bin edges are determined automatically) and calculates the median of COP-250 DEM minus MAR DEM within the bins. 
+	Plots histograms, and the median difference against elevation.
+ 
+ - plot_discharge_comp.py
+	> Integrates our data with the code and observational fata from Mankoff et al. (2020) to compare our coastal discharge estimations to river gauge data.
+
+ - plot_downscaling_eval.py
+	> Compares and plots the original and downscaled MAR runoff.
