@@ -38,6 +38,7 @@ for name in domains:
     domain_data.append(
         pandas.read_csv(data_path))
 
+# set up empty containers
 arctic = []
 gris = []
 gic = []
@@ -145,7 +146,7 @@ domains = [
     "RGI-9 Russian Arctic"
 ]
 
-# Create "best-fit" line
+# Create 1:1 line
 line_ice = 1 * arctic["RU_MAR_ice"] + 0
 line_tundra = 1 * arctic["RU_MAR_tundra"] + 0
 
