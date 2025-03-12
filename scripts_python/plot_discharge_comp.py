@@ -221,6 +221,9 @@ df = obs_all
 df = np.log10(df)
 df = df[~df.isin([np.nan, np.inf, -np.inf]).any(axis=1)]
 
+rmse = ((df['obs'] - df['MAR']) ** 2).mean() ** (1/2)
+mbe = (df['obs'] - df['MAR']).mean()
+
 df.sort_values(by='obs', inplace=True)
 x = df['obs']
 y_MAR = df['MAR']
@@ -230,12 +233,18 @@ model = sm.OLS(y_MAR, X)
 results = model.fit()
 prstd, iv_l, iv_u = wls_prediction_std(results)
 ax[0].fill_between(x, iv_u, iv_l, color="grey", alpha=0.25)
-ax[0].text(0.6, 0.05, 'r$^{2}$:' + str(round(results.rsquared,2)), transform=ax[0].transAxes, horizontalalignment='left')
+ax[0].text(0.75, 0.15, 'r$^{2}$:' + str(round(results.rsquared,2)), transform=ax[0].transAxes, horizontalalignment='left')
+ax[0].text(0.75, 0.075, 'rmse:' + str(round(rmse,2)), transform=ax[0].transAxes, horizontalalignment='left')
+ax[0].text(0.75, 0, 'mbe:' + str(round(mbe,2)), transform=ax[0].transAxes, horizontalalignment='left')
 
 # repeat but without GEM basins
 df = obs_noGEM
 df = np.log10(df)
 df = df[~df.isin([np.nan, np.inf, -np.inf]).any(axis=1)]
+
+rmse = ((df['obs'] - df['MAR']) ** 2).mean() ** (1/2)
+mbe = (df['obs'] - df['MAR']).mean()
+
 df.sort_values(by='obs', inplace=True)
 x = df['obs']
 y_MAR = df['MAR']
@@ -245,7 +254,9 @@ model = sm.OLS(y_MAR, X)
 results = model.fit()
 prstd, iv_l, iv_u = wls_prediction_std(results)
 ax[0].fill_between(x, iv_u, iv_l, color="red", alpha=0.1)
-ax[0].text(0.6, 0.13, 'r$^{2}$:' + str(round(results.rsquared,2)), transform=ax[0].transAxes, horizontalalignment='left', color='red')
+ax[0].text(0.75, 0.4, 'r$^{2}$:' + str(round(results.rsquared,2)), transform=ax[0].transAxes, horizontalalignment='left', color='red')
+ax[0].text(0.75, 0.325, 'rmse:' + str(round(rmse,2)), transform=ax[0].transAxes, horizontalalignment='left', color='red')
+ax[0].text(0.75, 0.25, 'mbe:' + str(round(mbe,2)), transform=ax[0].transAxes, horizontalalignment='left', color='red')
 
 # Format the plot
 coords = np.log10([1E-3, 1E4])
@@ -305,6 +316,10 @@ for k in obs.keys():
 df = pd.DataFrame((o,MAR), index=['obs','MAR']).T * 86400
 df = np.log10(df)
 df = df[~df.isin([np.nan, np.inf, -np.inf]).any(axis=1)]
+
+rmse = ((df['obs'] - df['MAR']) ** 2).mean() ** (1/2)
+mbe = (df['obs'] - df['MAR']).mean()
+
 df.sort_values(by='obs', inplace=True)
 x = df['obs']
 y_MAR = df['MAR']
@@ -314,7 +329,9 @@ model = sm.OLS(y_MAR, X)
 results = model.fit()
 prstd, iv_l, iv_u = wls_prediction_std(results)
 ax[1].fill_between(x, iv_u, iv_l, color="grey", alpha=0.25)
-ax[1].text(0.6, 0.05, 'r$^{2}$:' + str(round(results.rsquared,2)), transform=ax[1].transAxes, horizontalalignment='left')
+ax[1].text(0.4, 0.15, 'r$^{2}$:' + str(round(results.rsquared,2)), transform=ax[1].transAxes, horizontalalignment='left')
+ax[1].text(0.4, 0.075, 'rmse:' + str(round(rmse,2)), transform=ax[1].transAxes, horizontalalignment='left')
+ax[1].text(0.4, 0, 'mbe:' + str(round(mbe,2)), transform=ax[1].transAxes, horizontalalignment='left')
 
 ax[1].set_xlabel('Observed (m^3)')
 
