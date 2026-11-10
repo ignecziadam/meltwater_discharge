@@ -1,6 +1,6 @@
 # Meltwater discharge data processing description
 This document describes the content of the script files published in the following paper: A high-resolution, operational pan-Arctic meltwater discharge database from 1950 to 2021.  
-doi: xxxxxxxxxx
+doi: https://doi.org/10.5194/essd-17-3203-2025
 
 The document also provides guidance for code execution.
 
